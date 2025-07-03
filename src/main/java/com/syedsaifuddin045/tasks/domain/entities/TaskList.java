@@ -1,6 +1,5 @@
 package com.syedsaifuddin045.tasks.domain.entities;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
