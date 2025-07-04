@@ -39,8 +39,8 @@ Ensure you have the following installed on your system:
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/SyedSaifuddin045/JavaSpringBootCRUD.git
+   cd JavaSpringBootCRUD
    ```
 
 2. **Build the project:**
@@ -63,14 +63,6 @@ POSTGRES_USER=task_user
 POSTGRES_PASSWORD=task_password
 POSTGRES_DB=task_database
 POSTGRES_URL=jdbc:postgresql://db:5432/task_database
-
-# Application Configuration
-SPRING_PROFILES_ACTIVE=dev
-SERVER_PORT=8080
-
-# Swagger Configuration
-SPRINGDOC_API_DOCS_ENABLED=true
-SPRINGDOC_SWAGGER_UI_ENABLED=true
 ```
 
 ## 🏃 Running the Application
@@ -110,8 +102,6 @@ The application includes comprehensive API documentation using Swagger/OpenAPI 3
 ### Accessing Swagger UI
 
 - **Swagger UI**: http://localhost:8080/swagger-ui/index.html
-- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
-- **OpenAPI YAML**: http://localhost:8080/v3/api-docs.yaml
 
 ### Features of Swagger Integration
 
