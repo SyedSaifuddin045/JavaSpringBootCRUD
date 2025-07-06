@@ -31,17 +31,21 @@ public class TaskListServiceImplementation implements TaskListService {
         if (taskList.getId() != null) {
             throw new IllegalArgumentException("Task List already has an ID");
         }
+
         if (taskList.getTitle() == null) {
             throw new IllegalArgumentException("Task List Title must be present!");
         }
+
+        if (taskList.getOwner() == null) {
+            throw new IllegalArgumentException("Task List must have an owner!");
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        return taskListRepository.save(new TaskList(
-                null,
-                taskList.getTitle(),
-                taskList.getDescription(),
-                null,
-                now,
-                now));
+
+        taskList.setCreatedAt(now);
+        taskList.setUpdatedAt(now);
+
+        return taskListRepository.save(taskList);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class TaskListServiceImplementation implements TaskListService {
             throw new IllegalArgumentException("Task List must have an ID.");
 
         if (!Objects.equals(taskList.getId(), tasklistId))
-            throw new IllegalArgumentException("Attempting to change task list ID,this is not permitted");
+            throw new IllegalArgumentException("Attempting to change task list ID, this is not permitted");
 
         TaskList existingTaskList = taskListRepository.findById(tasklistId)
                 .orElseThrow(() -> new IllegalArgumentException("Task List not found!"));
@@ -64,15 +68,18 @@ public class TaskListServiceImplementation implements TaskListService {
         existingTaskList.setDescription(taskList.getDescription());
         existingTaskList.setUpdatedAt(LocalDateTime.now());
 
+        if (taskList.getCollaborators() != null) {
+            existingTaskList.setCollaborators(taskList.getCollaborators());
+        }
+
         return taskListRepository.save(existingTaskList);
     }
 
     @Override
     public void deleteTask(UUID taskID) {
         if (taskID == null)
-            throw new IllegalArgumentException("Missing id of the Task List to Delete.");
-        
+            throw new IllegalArgumentException("Missing ID of the Task List to delete.");
+
         taskListRepository.deleteById(taskID);
     }
-
 }

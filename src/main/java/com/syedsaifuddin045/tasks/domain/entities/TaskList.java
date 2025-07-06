@@ -2,6 +2,7 @@ package com.syedsaifuddin045.tasks.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
@@ -10,6 +11,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -28,8 +33,16 @@ public class TaskList {
     @Column(name = "description")
     private String description;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
     @OneToMany(mappedBy = "taskList", cascade = { CascadeType.REMOVE, CascadeType.PERSIST })
     private List<Task> tasks;
+
+    @ManyToMany
+    @JoinTable(name = "task_list_collaborators", joinColumns = @JoinColumn(name = "task_list_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> collaborators;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -37,12 +50,14 @@ public class TaskList {
     @Column(name = "updated", nullable = false)
     private LocalDateTime updatedAt;
 
-    public TaskList(UUID id, String title, String description, List<Task> tasks, LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+    public TaskList(UUID id, String title, String description, User owner, List<Task> tasks, Set<User> collaborators,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.owner = owner;
         this.tasks = tasks;
+        this.collaborators = collaborators;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -74,12 +89,28 @@ public class TaskList {
         this.description = description;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     public List<Task> getTasks() {
         return tasks;
     }
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public Set<User> getCollaborators() {
+        return collaborators;
+    }
+
+    public void setCollaborators(Set<User> collaborators) {
+        this.collaborators = collaborators;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -105,7 +136,9 @@ public class TaskList {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((owner == null) ? 0 : owner.hashCode());
         result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+        result = prime * result + ((collaborators == null) ? 0 : collaborators.hashCode());
         result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
         result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
         return result;
@@ -135,10 +168,20 @@ public class TaskList {
                 return false;
         } else if (!description.equals(other.description))
             return false;
+        if (owner == null) {
+            if (other.owner != null)
+                return false;
+        } else if (!owner.equals(other.owner))
+            return false;
         if (tasks == null) {
             if (other.tasks != null)
                 return false;
         } else if (!tasks.equals(other.tasks))
+            return false;
+        if (collaborators == null) {
+            if (other.collaborators != null)
+                return false;
+        } else if (!collaborators.equals(other.collaborators))
             return false;
         if (createdAt == null) {
             if (other.createdAt != null)
@@ -155,7 +198,9 @@ public class TaskList {
 
     @Override
     public String toString() {
-        return "TaskList [id=" + id + ", title=" + title + ", description=" + description + ", tasks=" + tasks
-                + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+        return "TaskList [id=" + id + ", title=" + title + ", description=" + description + ", owner=" + owner
+                + ", tasks=" + tasks + ", collaborators=" + collaborators + ", createdAt=" + createdAt + ", updatedAt="
+                + updatedAt + "]";
     }
+    
 }
